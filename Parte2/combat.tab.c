@@ -1,7 +1,7 @@
 #define YY_parse_h_included
 /*#define YY_USE_CLASS 
 */
-/*  A Bison++ parser, made from samurai.y  */
+/*  A Bison++ parser, made from combat.y  */
 
  /* with Bison++ version bison++ Version 1.21.9-1, adapted from GNU bison by coetmeur@icdc.fr
 Maintained by Magnus Ekdahl <magnus@debian.org>
@@ -98,20 +98,44 @@ Maintained by Magnus Ekdahl <magnus@debian.org>
 #define YYBISON 1  
 
  #line 88 "/usr/share/bison++/bison.cc"
-#line 1 "samurai.y"
+#line 1 "combat.y"
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h> // Para usar abs() para calcular la distancia
+#include <math.h>
 
-// Declaración de variables globales
-int vida1 = 10, vida2 = 10;
-int poder1 = 0, poder2 = 0;
-int posicion1 = 0, posicion2 = 0;
+typedef struct {
+    int vida;
+    int posicion;
+    int poder;
+} Jugador;
 
-void realizar_golpe(int tipo_golpe, int *vida_oponente);
-int calcular_probabilidad_golpe(int distancia);
-void yyerror(const char *s);  // Declaración de yyerror
+Jugador jugador1 = {10, -1, 0};  // Posición inicial del Jugador 1
+Jugador jugador2 = {10, 1, 0};   // Posición inicial del Jugador 2
+
+int calcular_probabilidad(int distancia);
+void procesar_movimiento(int movimiento, Jugador *jugador, Jugador *oponente);
+void procesar_ataque(int ataque, Jugador *jugador, Jugador *oponente);
+void procesar_ataque_especial(Jugador *jugador, Jugador *oponente);
+void imprimir_estado();
+
+extern FILE *yyin;  // Para manejar la entrada desde archivo
+
+// Declaración de yyerror
+void yyerror(const char *s);
+
+// Declaración de yylex (función generada por flex)
+int yylex(void);
+
+
+#line 31 "combat.y"
+typedef union {
+    int num;
+} yy_parse_stype;
+#define YY_parse_STYPE yy_parse_stype
+#ifndef YY_USE_CLASS
+#define YYSTYPE yy_parse_stype
+#endif
 
 #line 88 "/usr/share/bison++/bison.cc"
 /* %{ and %header{ and %union, during decl */
@@ -166,12 +190,6 @@ void yyerror(const char *s);  // Declaración de yyerror
 /* section apres lecture def, avant lecture grammaire S2 */
 
  #line 134 "/usr/share/bison++/bison.cc"
-#ifndef YY_USE_CLASS
-# ifndef YYSTYPE
-#  define YYSTYPE int
-#  define YYSTYPE_IS_TRIVIAL 1
-# endif
-#endif
 
 #line 134 "/usr/share/bison++/bison.cc"
 /* prefix */
@@ -313,16 +331,20 @@ typedef
 /* TOKEN C */
 
  #line 263 "/usr/share/bison++/bison.cc"
-#define	CORTE_DEBIL	258
-#define	CORTE_MEDIO	259
-#define	CORTE_FUERTE	260
-#define	PATADA_DEBIL	261
-#define	PATADA_MEDIA	262
-#define	PATADA_FUERTE	263
-#define	SALTAR	264
-#define	DERECHA	265
-#define	IZQUIERDA	266
-#define	AGACHAR	267
+#define	MOVER_IZQUIERDA	258
+#define	MOVER_DERECHA	259
+#define	SALTAR	260
+#define	AGACHAR	261
+#define	CORTE_DEBIL	262
+#define	CORTE_MEDIO	263
+#define	CORTE_FUERTE	264
+#define	PATADA_DEBIL	265
+#define	PATADA_MEDIO	266
+#define	PATADA_FUERTE	267
+#define	BURLA	268
+#define	CANCELAR_BURLA	269
+#define	RODAR	270
+#define	ATAQUE_ESPECIAL	271
 
 
 #line 263 "/usr/share/bison++/bison.cc"
@@ -372,16 +394,20 @@ public:
 /* static const int token ... */
 
  #line 307 "/usr/share/bison++/bison.cc"
+static const int MOVER_IZQUIERDA;
+static const int MOVER_DERECHA;
+static const int SALTAR;
+static const int AGACHAR;
 static const int CORTE_DEBIL;
 static const int CORTE_MEDIO;
 static const int CORTE_FUERTE;
 static const int PATADA_DEBIL;
-static const int PATADA_MEDIA;
+static const int PATADA_MEDIO;
 static const int PATADA_FUERTE;
-static const int SALTAR;
-static const int DERECHA;
-static const int IZQUIERDA;
-static const int AGACHAR;
+static const int BURLA;
+static const int CANCELAR_BURLA;
+static const int RODAR;
+static const int ATAQUE_ESPECIAL;
 
 
 #line 307 "/usr/share/bison++/bison.cc"
@@ -390,16 +416,20 @@ static const int AGACHAR;
 enum YY_parse_ENUM_TOKEN { YY_parse_NULL_TOKEN=0
 
  #line 310 "/usr/share/bison++/bison.cc"
-	,CORTE_DEBIL=258
-	,CORTE_MEDIO=259
-	,CORTE_FUERTE=260
-	,PATADA_DEBIL=261
-	,PATADA_MEDIA=262
-	,PATADA_FUERTE=263
-	,SALTAR=264
-	,DERECHA=265
-	,IZQUIERDA=266
-	,AGACHAR=267
+	,MOVER_IZQUIERDA=258
+	,MOVER_DERECHA=259
+	,SALTAR=260
+	,AGACHAR=261
+	,CORTE_DEBIL=262
+	,CORTE_MEDIO=263
+	,CORTE_FUERTE=264
+	,PATADA_DEBIL=265
+	,PATADA_MEDIO=266
+	,PATADA_FUERTE=267
+	,BURLA=268
+	,CANCELAR_BURLA=269
+	,RODAR=270
+	,ATAQUE_ESPECIAL=271
 
 
 #line 310 "/usr/share/bison++/bison.cc"
@@ -436,16 +466,20 @@ public:
 #if YY_parse_USE_CONST_TOKEN != 0
 
  #line 341 "/usr/share/bison++/bison.cc"
-const int YY_parse_CLASS::CORTE_DEBIL=258;
-const int YY_parse_CLASS::CORTE_MEDIO=259;
-const int YY_parse_CLASS::CORTE_FUERTE=260;
-const int YY_parse_CLASS::PATADA_DEBIL=261;
-const int YY_parse_CLASS::PATADA_MEDIA=262;
-const int YY_parse_CLASS::PATADA_FUERTE=263;
-const int YY_parse_CLASS::SALTAR=264;
-const int YY_parse_CLASS::DERECHA=265;
-const int YY_parse_CLASS::IZQUIERDA=266;
-const int YY_parse_CLASS::AGACHAR=267;
+const int YY_parse_CLASS::MOVER_IZQUIERDA=258;
+const int YY_parse_CLASS::MOVER_DERECHA=259;
+const int YY_parse_CLASS::SALTAR=260;
+const int YY_parse_CLASS::AGACHAR=261;
+const int YY_parse_CLASS::CORTE_DEBIL=262;
+const int YY_parse_CLASS::CORTE_MEDIO=263;
+const int YY_parse_CLASS::CORTE_FUERTE=264;
+const int YY_parse_CLASS::PATADA_DEBIL=265;
+const int YY_parse_CLASS::PATADA_MEDIO=266;
+const int YY_parse_CLASS::PATADA_FUERTE=267;
+const int YY_parse_CLASS::BURLA=268;
+const int YY_parse_CLASS::CANCELAR_BURLA=269;
+const int YY_parse_CLASS::RODAR=270;
+const int YY_parse_CLASS::ATAQUE_ESPECIAL=271;
 
 
 #line 341 "/usr/share/bison++/bison.cc"
@@ -464,14 +498,14 @@ YY_parse_CONSTRUCTOR_CODE;
  #line 352 "/usr/share/bison++/bison.cc"
 
 
-#define	YYFINAL		15
+#define	YYFINAL		22
 #define	YYFLAG		-32768
-#define	YYNTBASE	14
+#define	YYNTBASE	17
 
-#define YYTRANSLATE(x) ((unsigned)(x) <= 267 ? yytranslate[x] : 16)
+#define YYTRANSLATE(x) ((unsigned)(x) <= 271 ? yytranslate[x] : 22)
 
 static const char yytranslate[] = {     0,
-     2,     2,     2,     2,     2,     2,     2,     2,     2,    13,
+     2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -497,75 +531,81 @@ static const char yytranslate[] = {     0,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
      2,     2,     2,     2,     2,     1,     2,     3,     4,     5,
-     6,     7,     8,     9,    10,    11,    12
+     6,     7,     8,     9,    10,    11,    12,    13,    14,    15,
+    16
 };
 
 #if YY_parse_DEBUG != 0
 static const short yyprhs[] = {     0,
-     0,     3,     5,     7,     9,    11,    13,    15,    17,    19,
-    21
+     0,     2,     5,     7,     9,    11,    13,    15,    17,    19,
+    21,    23,    25,    27,    29,    31,    33,    35,    37
 };
 
-static const short yyrhs[] = {    15,
-    13,     0,     3,     0,     4,     0,     5,     0,     6,     0,
-     7,     0,     8,     0,     9,     0,    10,     0,    11,     0,
-    12,     0
+static const short yyrhs[] = {    18,
+     0,    18,    19,     0,    19,     0,    20,     0,    21,     0,
+     3,     0,     4,     0,     5,     0,     6,     0,    13,     0,
+    14,     0,    15,     0,     7,     0,     8,     0,     9,     0,
+    10,     0,    11,     0,    12,     0,    16,     0
 };
 
 #endif
 
 #if (YY_parse_DEBUG != 0) || defined(YY_parse_ERROR_VERBOSE) 
 static const short yyrline[] = { 0,
-    20,    24,    26,    27,    28,    29,    30,    31,    32,    33,
-    34
+    43,    47,    49,    52,    54,    57,    59,    60,    61,    62,
+    63,    64,    67,    69,    70,    71,    72,    73,    74
 };
 
-static const char * const yytname[] = {   "$","error","$illegal.","CORTE_DEBIL",
-"CORTE_MEDIO","CORTE_FUERTE","PATADA_DEBIL","PATADA_MEDIA","PATADA_FUERTE","SALTAR",
-"DERECHA","IZQUIERDA","AGACHAR","'\\n'","turno","movimiento",""
+static const char * const yytname[] = {   "$","error","$illegal.","MOVER_IZQUIERDA",
+"MOVER_DERECHA","SALTAR","AGACHAR","CORTE_DEBIL","CORTE_MEDIO","CORTE_FUERTE",
+"PATADA_DEBIL","PATADA_MEDIO","PATADA_FUERTE","BURLA","CANCELAR_BURLA","RODAR",
+"ATAQUE_ESPECIAL","combat","instrucciones","instruccion","movimiento","ataque",
+""
 };
 #endif
 
 static const short yyr1[] = {     0,
-    14,    15,    15,    15,    15,    15,    15,    15,    15,    15,
-    15
+    17,    18,    18,    19,    19,    20,    20,    20,    20,    20,
+    20,    20,    21,    21,    21,    21,    21,    21,    21
 };
 
 static const short yyr2[] = {     0,
-     2,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-     1
+     1,     2,     1,     1,     1,     1,     1,     1,     1,     1,
+     1,     1,     1,     1,     1,     1,     1,     1,     1
 };
 
 static const short yydefact[] = {     0,
-     2,     3,     4,     5,     6,     7,     8,     9,    10,    11,
-     0,     1,     0,     0,     0
+     6,     7,     8,     9,    13,    14,    15,    16,    17,    18,
+    10,    11,    12,    19,     1,     3,     4,     5,     2,     0,
+     0,     0
 };
 
-static const short yydefgoto[] = {    13,
-    11
+static const short yydefgoto[] = {    20,
+    15,    16,    17,    18
 };
 
 static const short yypact[] = {    -3,
 -32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,-32768,
-    -2,-32768,    10,    12,-32768
+-32768,-32768,-32768,-32768,    -3,-32768,-32768,-32768,-32768,    14,
+    15,-32768
 };
 
 static const short yypgoto[] = {-32768,
--32768
+-32768,     1,-32768,-32768
 };
 
 
-#define	YYLAST		12
+#define	YYLAST		16
 
 
 static const short yytable[] = {     1,
-     2,     3,     4,     5,     6,     7,     8,     9,    10,    14,
-    12,    15
+     2,     3,     4,     5,     6,     7,     8,     9,    10,    11,
+    12,    13,    14,    21,    22,    19
 };
 
 static const short yycheck[] = {     3,
-     4,     5,     6,     7,     8,     9,    10,    11,    12,     0,
-    13,     0
+     4,     5,     6,     7,     8,     9,    10,    11,    12,    13,
+    14,    15,    16,     0,     0,    15
 };
 
 #line 352 "/usr/share/bison++/bison.cc"
@@ -1061,49 +1101,69 @@ YYLABEL(yyreduce)
 
   switch (yyn) {
 
-case 1:
-#line 21 "samurai.y"
-{ /* lógica del turno */ ;
-    break;}
-case 2:
-#line 25 "samurai.y"
-{ realizar_golpe(1, &vida2); ;
-    break;}
-case 3:
-#line 26 "samurai.y"
-{ realizar_golpe(2, &vida2); ;
-    break;}
 case 4:
-#line 27 "samurai.y"
-{ realizar_golpe(3, &vida2); ;
+#line 53 "combat.y"
+{ procesar_movimiento(yyvsp[0].num, &jugador1, &jugador2); imprimir_estado(); ;
     break;}
 case 5:
-#line 28 "samurai.y"
-{ realizar_golpe(1, &vida2); ;
+#line 54 "combat.y"
+{ procesar_ataque(yyvsp[0].num, &jugador1, &jugador2); imprimir_estado(); ;
     break;}
 case 6:
-#line 29 "samurai.y"
-{ realizar_golpe(2, &vida2); ;
+#line 58 "combat.y"
+{ yyval.num = MOVER_IZQUIERDA; ;
     break;}
 case 7:
-#line 30 "samurai.y"
-{ realizar_golpe(3, &vida2); ;
+#line 59 "combat.y"
+{ yyval.num = MOVER_DERECHA; ;
     break;}
 case 8:
-#line 31 "samurai.y"
-{ printf("Salta\n"); ;
+#line 60 "combat.y"
+{ printf("Jugador saltó.\n"); yyval.num = 0; ;
     break;}
 case 9:
-#line 32 "samurai.y"
-{ posicion1++; printf("Se mueve a la derecha\n"); ;
+#line 61 "combat.y"
+{ printf("Jugador se agachó.\n"); yyval.num = 0; ;
     break;}
 case 10:
-#line 33 "samurai.y"
-{ posicion1--; printf("Se mueve a la izquierda\n"); ;
+#line 62 "combat.y"
+{ printf("Jugador burla.\n"); yyval.num = 0; ;
     break;}
 case 11:
-#line 34 "samurai.y"
-{ printf("Se agacha\n"); ;
+#line 63 "combat.y"
+{ printf("Jugador cancela burla.\n"); yyval.num = 0; ;
+    break;}
+case 12:
+#line 64 "combat.y"
+{ printf("Jugador rodó.\n"); yyval.num = 0; ;
+    break;}
+case 13:
+#line 68 "combat.y"
+{ yyval.num = CORTE_DEBIL; ;
+    break;}
+case 14:
+#line 69 "combat.y"
+{ yyval.num = CORTE_MEDIO; ;
+    break;}
+case 15:
+#line 70 "combat.y"
+{ yyval.num = CORTE_FUERTE; ;
+    break;}
+case 16:
+#line 71 "combat.y"
+{ yyval.num = PATADA_DEBIL; ;
+    break;}
+case 17:
+#line 72 "combat.y"
+{ yyval.num = PATADA_MEDIO; ;
+    break;}
+case 18:
+#line 73 "combat.y"
+{ yyval.num = PATADA_FUERTE; ;
+    break;}
+case 19:
+#line 74 "combat.y"
+{ procesar_ataque_especial(&jugador1, &jugador2); yyval.num = 0; ;
     break;}
 }
 
@@ -1309,38 +1369,74 @@ YYLABEL(yyerrhandle)
 /* END */
 
  #line 1038 "/usr/share/bison++/bison.cc"
-#line 37 "samurai.y"
+#line 77 "combat.y"
 
 
-void realizar_golpe(int tipo_golpe, int *vida_oponente) {
-    int distancia = abs(posicion1 - posicion2);
-    float probabilidad = calcular_probabilidad_golpe(distancia);
-    
-    printf("Distancia: %d, Probabilidad: %.2f\n", distancia, probabilidad);
+int calcular_probabilidad(int distancia) {
+    if (distancia < 2) return 1;
+    else if (distancia < 4) return 0.5;
+    return 0;
+}
 
-    if (probabilidad >= 0.5) {
-        switch(tipo_golpe) {
-            case 1: *vida_oponente -= 0.33; printf("Golpe débil! Vida oponente: %.2f\n", *vida_oponente); break;
-            case 2: *vida_oponente -= 0.66; printf("Golpe medio! Vida oponente: %.2f\n", *vida_oponente); break;
-            case 3: *vida_oponente -= 1.0;  printf("Golpe fuerte! Vida oponente: %.2f\n", *vida_oponente); break;
-        }
+void procesar_movimiento(int movimiento, Jugador *jugador, Jugador *oponente) {
+    if (movimiento == MOVER_IZQUIERDA && jugador->posicion > -3) jugador->posicion--;
+    else if (movimiento == MOVER_DERECHA && jugador->posicion < 3) jugador->posicion++;
+    printf("Jugador en posición: %d\n", jugador->posicion);
+}
+
+void procesar_ataque(int ataque, Jugador *jugador, Jugador *oponente) {
+    int distancia = abs(jugador->posicion - oponente->posicion);
+    float probabilidad = calcular_probabilidad(distancia);
+    float dano = 0;
+
+    if (ataque == CORTE_DEBIL || ataque == PATADA_DEBIL) dano = 0.33;
+    else if (ataque == CORTE_MEDIO || ataque == PATADA_MEDIO) dano = 0.66;
+    else if (ataque == CORTE_FUERTE || ataque == PATADA_FUERTE) dano = 1.0;
+
+    if ((rand() % 100) / 100.0 < probabilidad) {
+        oponente->vida -= dano;
+        jugador->poder++;
+        printf("Ataque exitoso! Daño: %.2f\n", dano);
+        if (jugador->poder >= 5) printf("Poder lleno! Puedes usar un ataque especial.\n");
     } else {
-        printf("El golpe falló por la distancia\n");
+        printf("Ataque fallido.\n");
     }
 }
 
-int calcular_probabilidad_golpe(int distancia) {
-    if (distancia < 2) return 1;
-    if (distancia < 4) return 0.5;
-    return 0;
+void procesar_ataque_especial(Jugador *jugador, Jugador *oponente) {
+    int distancia = abs(jugador->posicion - oponente->posicion);
+    float probabilidad = calcular_probabilidad(distancia);
+
+    if ((rand() % 100) / 100.0 < probabilidad) {
+        oponente->vida -= 3;
+        jugador->poder = 0;
+        printf("Ataque especial exitoso! Daño: 3\n");
+    } else {
+        printf("Ataque especial fallido.\n");
+    }
+}
+
+void imprimir_estado() {
+    printf("Jugador 1 - Vida: %d, Posición: %d, Poder: %d\n", jugador1.vida, jugador1.posicion, jugador1.poder);
+    printf("Jugador 2 - Vida: %d, Posición: %d, Poder: %d\n", jugador2.vida, jugador2.posicion, jugador2.poder);
 }
 
 void yyerror(const char *s) {
     fprintf(stderr, "Error: %s\n", s);
 }
 
-int main(void) {
-    yyparse();
+int main(int argc, char **argv) {
+    if (argc > 1) {
+        FILE *file = fopen(argv[1], "r");
+        if (!file) {
+            perror("Error abriendo archivo");
+            return 1;
+        }
+        yyin = file;  // Asignación de la entrada al archivo proporcionado
+        yyparse();
+        fclose(file);
+    } else {
+        printf("Uso: ./combate <archivo.txt>\n");
+    }
     return 0;
 }
-

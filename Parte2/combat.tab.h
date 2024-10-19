@@ -13,6 +13,15 @@
 
  #line 8 "/usr/share/bison++/bison.h"
 
+#line 31 "combat.y"
+typedef union {
+    int num;
+} yy_parse_stype;
+#define YY_parse_STYPE yy_parse_stype
+#ifndef YY_USE_CLASS
+#define YYSTYPE yy_parse_stype
+#endif
+
 #line 21 "/usr/share/bison++/bison.h"
  /* %{ and %header{ and %union, during decl */
 #ifndef YY_parse_COMPATIBILITY
@@ -67,12 +76,6 @@
 
 
  #line 68 "/usr/share/bison++/bison.h"
-#ifndef YY_USE_CLASS
-# ifndef YYSTYPE
-#  define YYSTYPE int
-#  define YYSTYPE_IS_TRIVIAL 1
-# endif
-#endif
 
 #line 68 "/usr/share/bison++/bison.h"
 /* prefix */
@@ -186,16 +189,20 @@ typedef
 
 
  #line 169 "/usr/share/bison++/bison.h"
-#define	CORTE_DEBIL	258
-#define	CORTE_MEDIO	259
-#define	CORTE_FUERTE	260
-#define	PATADA_DEBIL	261
-#define	PATADA_MEDIA	262
-#define	PATADA_FUERTE	263
-#define	SALTAR	264
-#define	DERECHA	265
-#define	IZQUIERDA	266
-#define	AGACHAR	267
+#define	MOVER_IZQUIERDA	258
+#define	MOVER_DERECHA	259
+#define	SALTAR	260
+#define	AGACHAR	261
+#define	CORTE_DEBIL	262
+#define	CORTE_MEDIO	263
+#define	CORTE_FUERTE	264
+#define	PATADA_DEBIL	265
+#define	PATADA_MEDIO	266
+#define	PATADA_FUERTE	267
+#define	BURLA	268
+#define	CANCELAR_BURLA	269
+#define	RODAR	270
+#define	ATAQUE_ESPECIAL	271
 
 
 #line 169 "/usr/share/bison++/bison.h"
@@ -244,16 +251,20 @@ public:
   /* static const int token ... */
   
  #line 212 "/usr/share/bison++/bison.h"
+static const int MOVER_IZQUIERDA;
+static const int MOVER_DERECHA;
+static const int SALTAR;
+static const int AGACHAR;
 static const int CORTE_DEBIL;
 static const int CORTE_MEDIO;
 static const int CORTE_FUERTE;
 static const int PATADA_DEBIL;
-static const int PATADA_MEDIA;
+static const int PATADA_MEDIO;
 static const int PATADA_FUERTE;
-static const int SALTAR;
-static const int DERECHA;
-static const int IZQUIERDA;
-static const int AGACHAR;
+static const int BURLA;
+static const int CANCELAR_BURLA;
+static const int RODAR;
+static const int ATAQUE_ESPECIAL;
 
 
 #line 212 "/usr/share/bison++/bison.h"
@@ -262,16 +273,20 @@ static const int AGACHAR;
   enum YY_parse_ENUM_TOKEN { YY_parse_NULL_TOKEN=0
   
  #line 215 "/usr/share/bison++/bison.h"
-	,CORTE_DEBIL=258
-	,CORTE_MEDIO=259
-	,CORTE_FUERTE=260
-	,PATADA_DEBIL=261
-	,PATADA_MEDIA=262
-	,PATADA_FUERTE=263
-	,SALTAR=264
-	,DERECHA=265
-	,IZQUIERDA=266
-	,AGACHAR=267
+	,MOVER_IZQUIERDA=258
+	,MOVER_DERECHA=259
+	,SALTAR=260
+	,AGACHAR=261
+	,CORTE_DEBIL=262
+	,CORTE_MEDIO=263
+	,CORTE_FUERTE=264
+	,PATADA_DEBIL=265
+	,PATADA_MEDIO=266
+	,PATADA_FUERTE=267
+	,BURLA=268
+	,CANCELAR_BURLA=269
+	,RODAR=270
+	,ATAQUE_ESPECIAL=271
 
 
 #line 215 "/usr/share/bison++/bison.h"
